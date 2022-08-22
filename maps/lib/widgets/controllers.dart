@@ -8,22 +8,8 @@ class MapControllers extends StatelessWidget {
   const MapControllers(
       {Key? key, required this.controller, required this.onHomePressed})
       : super(key: key);
-  final shift = 0.001;
   final YandexMapController controller;
-  final Future<void> onHomePressed;
-
-  Future<void> onArrowPressed(YandexMapController localController,
-      {double left = 0,
-      double right = 0,
-      double up = 0,
-      double down = 0}) async {
-    final position = await localController.getCameraPosition();
-    await localController.moveCamera(CameraUpdate.newCameraPosition(
-        CameraPosition(
-            target: Point(
-                latitude: position.target.latitude + up - down,
-                longitude: position.target.longitude + right - left))));
-  }
+  final Future<void> Function() onHomePressed;
 
   @override
   Widget build(BuildContext context) {
@@ -34,25 +20,36 @@ class MapControllers extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               MapIconButton(
-                  onBtnPressed: onHomePressed, iconData: Icons.home_outlined),
+                  controller: controller,
+                  iconData: Icons.home_outlined,
+                  type: BtnType.home,
+                  onHomePressed: onHomePressed),
               Row(
                 children: [
                   MapIconButton(
-                      onBtnPressed: onArrowPressed(controller, left: shift),
-                      iconData: Icons.arrow_circle_left_outlined),
+                      controller: controller,
+                      type: BtnType.left,
+                      iconData: Icons.arrow_circle_left_outlined,
+                      onHomePressed: onHomePressed),
                   Column(
                     children: [
                       MapIconButton(
-                          onBtnPressed: onArrowPressed(controller, up: shift),
-                          iconData: Icons.arrow_circle_up_outlined),
+                          controller: controller,
+                          type: BtnType.up,
+                          iconData: Icons.arrow_circle_up_outlined,
+                          onHomePressed: onHomePressed),
                       MapIconButton(
-                          onBtnPressed: onArrowPressed(controller, down: shift),
-                          iconData: Icons.arrow_circle_down_outlined)
+                          controller: controller,
+                          type: BtnType.down,
+                          iconData: Icons.arrow_circle_down_outlined,
+                          onHomePressed: onHomePressed)
                     ],
                   ),
                   MapIconButton(
-                      onBtnPressed: onArrowPressed(controller, right: shift),
-                      iconData: Icons.arrow_circle_right_outlined),
+                      controller: controller,
+                      type: BtnType.right,
+                      iconData: Icons.arrow_circle_right_outlined,
+                      onHomePressed: onHomePressed),
                 ],
               )
             ],

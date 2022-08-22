@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:maps/widgets/controllers.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
-
-import '../widgets/arrow_widget.dart';
-import '../widgets/zoom_slider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,10 +21,12 @@ class HomePageState extends State<HomePage> {
   double currentSliderValue = _scale;
 
   Future<void> onHomePressed() async {
-    controller.moveCamera(
-        CameraUpdate.newCameraPosition(
-            CameraPosition(target: _myHomePoint, zoom: currentSliderValue)),
-        animation: animation);
+    setState(() async {
+      await controller.moveCamera(
+          CameraUpdate.newCameraPosition(
+              CameraPosition(target: _myHomePoint, zoom: currentSliderValue)),
+          animation: animation);
+    });
   }
 
   Future<void> onArrowPressed(
@@ -34,11 +34,14 @@ class HomePageState extends State<HomePage> {
       double right = 0,
       double up = 0,
       double down = 0}) async {
-    final position = await controller.getCameraPosition();
-    await controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-        target: Point(
-            latitude: position.target.latitude + up - down,
-            longitude: position.target.longitude + right - left))));
+    setState(() async {
+      final position = await controller.getCameraPosition();
+      await controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
+          target: Point(
+              latitude: position.target.latitude + up - down,
+              longitude: position.target.longitude + right - left),
+          zoom: currentSliderValue)));
+    });
   }
 
   @override
@@ -85,52 +88,8 @@ class HomePageState extends State<HomePage> {
           ),
         ),
         _isMapInitialized
-            ? Padding(
-                padding: const EdgeInsets.all(16.0),
-                child:
-                    Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      MapIconButton(
-                          onBtnPressed: () async {
-                            await onHomePressed();
-                          },
-                          iconData: Icons.home_outlined),
-                      Row(
-                        children: [
-                          MapIconButton(
-                              onBtnPressed: () async {
-                                await onArrowPressed(left: shift);
-                              },
-                              iconData: Icons.arrow_circle_left_outlined),
-                          Column(
-                            children: [
-                              MapIconButton(
-                                  onBtnPressed: () async {
-                                    await onArrowPressed(up: shift);
-                                  },
-                                  iconData: Icons.arrow_circle_up_outlined),
-                              MapIconButton(
-                                  onBtnPressed: () async {
-                                    await onArrowPressed(down: shift);
-                                  },
-                                  iconData: Icons.arrow_circle_down_outlined)
-                            ],
-                          ),
-                          MapIconButton(
-                              onBtnPressed: () async {
-                                await onArrowPressed(right: shift);
-                              },
-                              iconData: Icons.arrow_circle_right_outlined),
-                        ],
-                      )
-                    ],
-                  ),
-                  ZoomSlider(
-                    controller: controller,
-                  )
-                ]))
+            ? MapControllers(
+                controller: controller, onHomePressed: onHomePressed)
             : const CircularProgressIndicator()
       ]),
     );
