@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../utils/btn_direction.dart';
-
 class MapIconButton extends StatelessWidget {
-  const MapIconButton(
-      {Key? key,
-      required this.iconData,
-      required this.direction,
-      this.onHomePressed,
-      this.onArrowPressed})
-      : super(key: key);
-  final Future<void> Function()? onHomePressed;
-  final Future<void> Function(BtnDirection direction)? onArrowPressed;
+  const MapIconButton({
+    Key? key,
+    required this.iconData,
+    required this.onBtnPressed,
+  }) : super(key: key);
+  final Function() onBtnPressed;
   final IconData iconData;
-  final BtnDirection? direction;
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +18,7 @@ class MapIconButton extends StatelessWidget {
         child: IconButton(
             color: Colors.black54,
             onPressed: () async {
-              if (onHomePressed != null) {
-                await onHomePressed!();
-              } else if (onArrowPressed != null && direction != null) {
-                await onArrowPressed!(direction!);
-              }
+              onBtnPressed();
             },
             icon: Icon(iconData)));
   }

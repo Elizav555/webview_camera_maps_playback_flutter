@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../utils/map_constants.dart';
+
 class ZoomSlider extends StatelessWidget {
   const ZoomSlider(
       {Key? key,
@@ -7,9 +9,8 @@ class ZoomSlider extends StatelessWidget {
       required this.onSliderChanged})
       : super(key: key);
   final double currentSliderValue;
-  static const double _scale = 17.0;
 
-  final Future<void> Function(double) onSliderChanged;
+  final Function(double) onSliderChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +19,11 @@ class ZoomSlider extends StatelessWidget {
       child: Slider(
         value: currentSliderValue,
         min: 0,
-        max: _scale,
+        max: scale,
         divisions: 100,
         label: currentSliderValue.round().toString(),
-        onChanged: (double value) async {
-          await onSliderChanged(value);
+        onChanged: (double value) {
+          onSliderChanged(value);
         },
       ),
     );
