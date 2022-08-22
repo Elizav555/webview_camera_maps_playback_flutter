@@ -48,6 +48,9 @@ class HomePageState extends State<HomePage> {
         }
       },
     );
+    setState(() {
+      controller;
+    });
     super.initState();
   }
 

@@ -1,13 +1,13 @@
 package com.example.maps
 
-import android.os.Bundle
-import android.os.PersistableBundle
+import androidx.annotation.NonNull
 import com.yandex.mapkit.MapKitFactory
 import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
 
 class MainActivity : FlutterActivity() {
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         MapKitFactory.setApiKey(API_KEY);
-        super.onCreate(savedInstanceState, persistentState)
+        super.configureFlutterEngine(flutterEngine)
     }
 }

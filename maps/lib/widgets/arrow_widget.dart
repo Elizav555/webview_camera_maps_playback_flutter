@@ -14,7 +14,6 @@ class MapIconButton extends StatelessWidget {
             color: Colors.grey.withOpacity(0.3),
             borderRadius: BorderRadius.circular(16)),
         child: IconButton(
-            iconSize: 40,
             color: Colors.black54,
             onPressed: () async {
               onBtnPressed;

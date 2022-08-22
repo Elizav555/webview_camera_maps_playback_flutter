@@ -27,65 +27,39 @@ class MapControllers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      Align(
-          alignment: Alignment.bottomLeft,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width / 3,
-            height: MediaQuery.of(context).size.height / 6,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Column(
-                  children: [
-                    const SizedBox(
-                      width: 20,
-                    ),
-                    MapIconButton(
-                        onBtnPressed: onHomePressed,
-                        iconData: Icons.home_outlined)
-                  ],
-                )
-              ],
-            ),
-          )),
-      Align(
-          alignment: Alignment.bottomRight,
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width / 3 + 40,
-            height: MediaQuery.of(context).size.height / 5,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  children: [
-                    MapIconButton(
-                        onBtnPressed: onArrowPressed(controller, left: shift),
-                        iconData: Icons.arrow_circle_left_outlined),
-                    Column(
-                      children: [
-                        MapIconButton(
-                            onBtnPressed: onArrowPressed(controller, up: shift),
-                            iconData: Icons.arrow_circle_up_outlined),
-                        MapIconButton(
-                            onBtnPressed:
-                                onArrowPressed(controller, down: shift),
-                            iconData: Icons.arrow_circle_down_outlined)
-                      ],
-                    ),
-                    MapIconButton(
-                        onBtnPressed: onArrowPressed(controller, right: shift),
-                        iconData: Icons.arrow_circle_right_outlined),
-                  ],
-                )
-              ],
-            ),
-          )),
-      Align(
-          alignment: Alignment.bottomCenter,
-          child: ZoomSlider(
+    return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MapIconButton(
+                  onBtnPressed: onHomePressed, iconData: Icons.home_outlined),
+              Row(
+                children: [
+                  MapIconButton(
+                      onBtnPressed: onArrowPressed(controller, left: shift),
+                      iconData: Icons.arrow_circle_left_outlined),
+                  Column(
+                    children: [
+                      MapIconButton(
+                          onBtnPressed: onArrowPressed(controller, up: shift),
+                          iconData: Icons.arrow_circle_up_outlined),
+                      MapIconButton(
+                          onBtnPressed: onArrowPressed(controller, down: shift),
+                          iconData: Icons.arrow_circle_down_outlined)
+                    ],
+                  ),
+                  MapIconButton(
+                      onBtnPressed: onArrowPressed(controller, right: shift),
+                      iconData: Icons.arrow_circle_right_outlined),
+                ],
+              )
+            ],
+          ),
+          ZoomSlider(
             controller: controller,
-          )),
-    ]);
+          )
+        ]));
   }
 }
