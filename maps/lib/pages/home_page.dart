@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:maps/utils/btn_direction.dart';
 import 'package:maps/widgets/controllers.dart';
 import 'package:yandex_mapkit/yandex_mapkit.dart';
 
@@ -21,26 +22,47 @@ class HomePageState extends State<HomePage> {
   double currentSliderValue = _scale;
 
   Future<void> onHomePressed() async {
-    setState(() async {
-      await controller.moveCamera(
-          CameraUpdate.newCameraPosition(
-              CameraPosition(target: _myHomePoint, zoom: currentSliderValue)),
-          animation: animation);
+    await controller.moveCamera(
+        CameraUpdate.newCameraPosition(
+            CameraPosition(target: _myHomePoint, zoom: currentSliderValue)),
+        animation: animation);
+    setState(() {
+      controller;
     });
   }
 
-  Future<void> onArrowPressed(
-      {double left = 0,
-      double right = 0,
-      double up = 0,
-      double down = 0}) async {
-    setState(() async {
-      final position = await controller.getCameraPosition();
-      await controller.moveCamera(CameraUpdate.newCameraPosition(CameraPosition(
-          target: Point(
-              latitude: position.target.latitude + up - down,
-              longitude: position.target.longitude + right - left),
-          zoom: currentSliderValue)));
+  Future<void> onArrowPressed(BtnDirection direction) async {
+    double up = 0, down = 0, left = 0, right = 0;
+    switch (direction) {
+      case BtnDirection.up:
+        up = shift * currentSliderValue;
+        break;
+      case BtnDirection.down:
+        down = shift * currentSliderValue;
+        break;
+      case BtnDirection.right:
+        right = shift * currentSliderValue;
+        break;
+      case BtnDirection.left:
+        left = shift * currentSliderValue;
+        break;
+    }
+    final position = await controller.getCameraPosition();
+    final newPoint = Point(
+        latitude: position.target.latitude + up - down,
+        longitude: position.target.longitude + right - left);
+    await controller.moveCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: newPoint, zoom: currentSliderValue)));
+    setState(() {
+      controller;
+    });
+  }
+
+  Future<void> onSliderChange(double value) async {
+    setState(() {
+      currentSliderValue = value;
+      controller.moveCamera(CameraUpdate.zoomTo(currentSliderValue),
+          animation: animation);
     });
   }
 
@@ -54,42 +76,36 @@ class HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(children: <Widget>[
-        Expanded(
-          child: YandexMap(
-            mapType: MapType.map,
-            logoAlignment: const MapAlignment(
-                horizontal: HorizontalAlignment.left,
-                vertical: VerticalAlignment.bottom),
-            onMapCreated: (YandexMapController yandexMapController) async {
-              controller = yandexMapController;
-              setState(() {
-                _isMapInitialized = true;
-              });
-              await onHomePressed();
-            },
-            onMapTap: (Point point) async {
-              await controller.deselectGeoObject();
-            },
-            onObjectTap: (GeoObject geoObject) async {
-              if (geoObject.selectionMetadata != null) {
-                await controller.selectGeoObject(
-                    geoObject.selectionMetadata!.id,
-                    geoObject.selectionMetadata!.layerId);
-              }
-            },
-            onCameraPositionChanged: (CameraPosition cameraPosition,
-                CameraUpdateReason reason, bool finished) {
-              print('Camera position: $cameraPosition, Reason: $reason');
-
-              if (finished) {
-                print('Camera position movement has been finished');
-              }
-            },
-          ),
+        YandexMap(
+          mapType: MapType.map,
+          logoAlignment: const MapAlignment(
+              horizontal: HorizontalAlignment.left,
+              vertical: VerticalAlignment.bottom),
+          onMapCreated: (YandexMapController yandexMapController) async {
+            controller = yandexMapController;
+            setState(() {
+              _isMapInitialized = true;
+            });
+            await onHomePressed();
+          },
+          onMapTap: (Point point) async {
+            await controller.deselectGeoObject();
+          },
+          onObjectTap: (GeoObject geoObject) async {
+            if (geoObject.selectionMetadata != null) {
+              await controller.selectGeoObject(geoObject.selectionMetadata!.id,
+                  geoObject.selectionMetadata!.layerId);
+            }
+          },
         ),
         _isMapInitialized
             ? MapControllers(
-                controller: controller, onHomePressed: onHomePressed)
+                controller: controller,
+                onHomePressed: onHomePressed,
+                onArrowPressed: onArrowPressed,
+                currentSliderValue: currentSliderValue,
+                onSliderChanged: onSliderChange,
+              )
             : const CircularProgressIndicator()
       ]),
     );
