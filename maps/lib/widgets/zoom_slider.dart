@@ -21,7 +21,7 @@ class ZoomSliderState extends State<ZoomSlider> {
       height: 50,
       child: Slider(
         value: _currentSliderValue,
-        min: -10,
+        min: 0,
         max: _scale,
         divisions: 100,
         label: _currentSliderValue.round().toString(),

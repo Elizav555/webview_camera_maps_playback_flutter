@@ -4,7 +4,7 @@ class MapIconButton extends StatelessWidget {
   const MapIconButton(
       {Key? key, required this.onBtnPressed, required this.iconData})
       : super(key: key);
-  final Future<void> onBtnPressed;
+  final Future<Null> Function() onBtnPressed;
   final IconData iconData;
 
   @override
